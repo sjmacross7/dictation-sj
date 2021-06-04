@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://sdk.amazonaws.com/js/aws-sdk-2.0.0-rc1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.5.16/dist/vue.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios@0.18.0/dist/axios.min.js"></script>
+    <title>Document</title>
+
+    <style>
+        [v-cloak] {
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="app">
+        <input type="file" id="file-chooser" />
+        <button id="upload-button" v-on:click="getGijirokuResult">Upload to S3</button>
+        <div id="results">{{ results }}</div>
+
+
+        <section v-if="hasError">
+            <p>
+                Error
+            </p>
+        </section>
+        <section v-else>
+            <div v-if="loading">
+                loading...
+            </div>
+            <div v-else>
+                <p v-cloak>
+                    {{ transcript }}
+                </p>
+            </div>
+        </section>
+    </div>
+
+
+    <script type="text/javascript">
+
+
+        // AWS.config.update({ accessKeyId: 'AKIASGY66POOG3OCJDFN', secretAccessKey: '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' });
+        // var bucket = new AWS.S3({ params: { Bucket: 'gijiroku-app-sumi' } });
+
+        // var fileChooser = document.getElementById('file-chooser');
+        // var button = document.getElementById('upload-button');
+        // var results = document.getElementById('results');
+        // button.addEventListener('click', function () {
+        //     var file = fileChooser.files[0];
+        //     if (file) {
+        //         results.innerHTML = '';
+
+        //         var params = { Key: file.name, ContentType: file.type, Body: file };
+        //         bucket.putObject(params, function (err, data) {
+        //             results.innerHTML = err ? 'ERROR!' : 'UPLOADED.';
+        //         });
+        //     } else {
+        //         results.innerHTML = 'Nothing to upload.';
+        //     }
+        // }, false);
+
+
+
+
+
+        var app = new Vue({
+            el: '#app',
+            data: {
+                results: "",
+                transcript: null,
+                hasError: false,
+                loading: true
+            },
+            methods: {
+
+                getGijirokuResult: function () {
+
+                    AWS.config.update({ accessKeyId: 'AKIASGY66POOG3OCJDFN', secretAccessKey: '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' });
+                    var bucket = new AWS.S3({ params: { Bucket: 'gijiroku-app-sumi' } });
+
+                    var fileChooser = document.getElementById('file-chooser');
+
+                    var file = fileChooser.files[0];
+                    if (file) {
+                        
+                        var params = { Key: file.name, ContentType: file.type, Body: file };
+                        bucket.putObject(params, function (err, data) {
+                            this.results = err ? 'ERROR!' : 'UPLOADED.';
+                        });
+                    } else {
+                        this.results = 'Nothing to upload.';
+                    }
+
+                    console.log('transcriptは:' + this.transcript);
+
+                    // while (this.transcript === null) {
+                    //     console.log('transcriptは:' + this.transcript);
+                    //     axios.get('https://h1xw38xgo2.execute-api.ap-northeast-1.amazonaws.com/gijiroku/gijiroku')
+                    //         .then(function (response) {
+                    //             console.log(response);
+                    //             this.transcript = response
+                    //         }.bind(this))
+                    //         .catch(function (error) {
+                    //             console.log(error);
+                    //             this.hasError = true;
+                    //         }.bind(this))
+                    //         .finally(function () {
+                    //             this.loading = false
+                    //         }.bind(this))
+                    // }
+                }
+
+            }
+        })
+
+
+    </script>
+
+</body>
+
+</html>
