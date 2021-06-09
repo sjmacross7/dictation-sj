@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://sdk.amazonaws.com/js/aws-sdk-2.0.0-rc1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.5.16/dist/vue.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios@0.18.0/dist/axios.min.js"></script>
+    <title>Dictation</title>
+
+    <style>
+        [v-cloak] {
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="app">
+        <input type="file" id="file-chooser" />
+        <button id="upload-button" v-on:click="getDictationResult">Upload to S3</button>
+        <div id="results">{{ results }}</div>
+
+        <section v-if="hasError">
+            <p>
+                Error
+            </p>
+        </section>
+        <section v-else>
+            <div v-if="loading">
+                loading...
+            </div>
+            <div v-else>
+                <p v-cloak>
+                    {{ transcript }}
+                </p>
+            </div>
+        </section>
+    </div>
+
+
+    <script type="text/javascript" src="./js/dictation-app.js"></script>
+
+</body>
+
+</html>
